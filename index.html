@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Computer Crash Simulation</title>
+     <link rel="icon" href="Gemini_Generated_Image_avret8avret8avre-removebg-preview.png">
+    <style>
+        body, html { margin: 0; padding: 0; background: #000; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
+        canvas { display: block; image-rendering: pixelated; }
+        #ui-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+        
+        
+        .win { position: absolute; background: #f0f0f0; border: 1px solid #888; width: 250px; box-shadow: 4px 4px 0px #333; pointer-events: auto; font-family: monospace; }
+        .win-header { background: #dfdfdf; padding: 5px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #888; }
+        .win-close { width: 16px; height: 16px; background: #ff5f56; border: 1px solid #e33e32; border-radius: 50%; color: white; font-size: 10px; font-weight: bold; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .win-body { padding: 10px; font-size: 12px; color: #000; }
+
+        #dialog {
+            position: fixed; bottom: 10%; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.95); border: 2px solid #0f0; color: #0f0;
+            padding: 20px; width: 60%; display: none; z-index: 100; text-align: center; font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+
+<div id="ui-layer"></div>
+<div id="dialog"></div>
+<canvas id="screen"></canvas>
+
+<script>
+
+
+const LINK_DO_BONECO = "file:///C:/Users/Joud%202/Downloads/6f5471a354a85154d714cb1cb3c5bf2f-removebg-preview.png"; 
+
+
+const canvas = document.getElementById('screen');
+const ctx = canvas.getContext('2d');
+const uiLayer = document.getElementById('ui-layer');
+const dialog = document.getElementById('dialog');
+
+const charImg = new Image();
+let imageReady = false;
+
+if(LINK_DO_BONECO !== "") {
+    charImg.src = LINK_DO_BONECO;
+    charImg.onload = () => { imageReady = true; };
+}
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let state = "INITIAL_SCAN"; 
+let frame = 0;
+let progress = 0;
+let logs = [];
+let firewalls = [];
+let particles = [];
+let player = { x: canvas.width/2, y: canvas.height - 150, dir: 0 };
+
+window.addEventListener('keydown', e => {
+    if(e.key === "ArrowLeft" || e.key === "a") player.dir = -1;
+    if(e.key === "ArrowRight" || e.key === "d") player.dir = 1;
+});
+window.addEventListener('keyup', e => player.dir = 0);
+
+function createExplosion(x, y) {
+    for(let i=0; i<12; i++) {
+        particles.push({x, y, vx: (Math.random()-0.5)*15, vy: (Math.random()-0.5)*15, life: 1});
+    }
+}
+
+function drawBrowserUI() {
+    ctx.fillStyle = "#dee1e6"; ctx.fillRect(0, 0, canvas.width, 40);
+    ctx.fillStyle = "#fff"; ctx.beginPath();
+    ctx.moveTo(10, 40); ctx.lineTo(30, 10); ctx.lineTo(200, 10); ctx.lineTo(220, 40); ctx.fill();
+    ctx.fillStyle = "#333"; ctx.font = "12px Segoe UI"; ctx.fillText("System Diagnostics", 50, 28);
+    ctx.fillStyle = "#fff"; ctx.fillRect(0, 40, canvas.width, 45);
+    ctx.fillStyle = "#f1f3f4"; ctx.roundRect(150, 48, canvas.width - 300, 28, 15); ctx.fill();
+    ctx.fillStyle = "#5f6368"; ctx.fillText("chrome://system-integrity-check/v3", 170, 67);
+}
+
+function drawPlayer(x, y, s = 1) {
+    
+    if(imageReady) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.scale(s, s);
+        ctx.drawImage(charImg, -40, 0, 80, 80);
+        ctx.restore();
+    }
+}
+
+async function speak(msg) {
+    dialog.style.display = "block"; dialog.innerHTML = "";
+    for(let char of msg) { dialog.innerHTML += char; await new Promise(r => setTimeout(r, 30)); }
+    await new Promise(r => setTimeout(r, 2000)); dialog.style.display = "none";
+}
+
+async function startSequence() {
+    const msgs = ["Initializing diagnostic kernel...", "Scanning 'Person' records...", "THREAT FOUND: sys_temp_x86.exe"];
+    for(let m of msgs) { logs.push(m); await new Promise(r => setTimeout(r, 1000)); }
+
+    for(let i=0; i<8; i++) {
+        const div = document.createElement('div');
+        div.className = 'win'; div.style.left = Math.random()*70+'%'; div.style.top = Math.random()*70+'%';
+        div.innerHTML = `<div class="win-header"><span>Kernel_Error.exe</span><div class="win-close">X</div></div><div class="win-body">UNAUTHORIZED ACCESS DETECTED!</div>`;
+        uiLayer.appendChild(div); await new Promise(r => setTimeout(r, 200));
+    }
+
+    await new Promise(r => setTimeout(r, 1000));
+    uiLayer.innerHTML = ""; state = "SUCTION";
+    await new Promise(r => setTimeout(r, 3000));
+    
+    state = "MATRIX_BOSS";
+    await speak("MATRIX KING: Person... welcome to the source code.");
+    await speak("MATRIX KING: Survive the Windows Firewall to recompile to the life!");
+    state = "PLAYABLE";
+}
+
+function loop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    frame++;
+
+    if(state === "INITIAL_SCAN") {
+        ctx.fillStyle = "#fff"; ctx.fillRect(0,0,canvas.width,canvas.height);
+        drawBrowserUI();
+        ctx.fillStyle = "#333"; ctx.font = "bold 24px Segoe UI"; ctx.fillText("Security Core Audit", canvas.width/2 - 120, 150);
+        ctx.font = "14px monospace"; ctx.fillStyle = "#666";
+        logs.forEach((l, i) => ctx.fillText(`> ${l}`, canvas.width/2 - 200, 200 + (i*25)));
+    }
+
+    if(state === "SUCTION") {
+        ctx.fillStyle = "#fff"; ctx.fillRect(0,0,canvas.width,canvas.height);
+        let s = 8 * (1 - (frame%300)/300);
+        drawPlayer(canvas.width/2, canvas.height/2, s);
+    }
+
+    if(state === "MATRIX_BOSS" || state === "PLAYABLE") {
+        ctx.fillStyle = "#000"; ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = "#030";
+        for(let i=0; i<canvas.width; i+=25) ctx.fillText(Math.random()>0.5?"1":"0", i, (frame*5+i)%canvas.height);
+
+        if(state === "PLAYABLE") {
+            player.x += player.dir * 12;
+            player.x = Math.max(50, Math.min(canvas.width-50, player.x));
+            progress += 0.07;
+            if(frame % 15 === 0) firewalls.push({x: Math.random()*canvas.width, y: -50, v: 9});
+            
+            ctx.fillStyle = "#0f0"; ctx.strokeRect(canvas.width/2-150, 50, 300, 20);
+            ctx.fillRect(canvas.width/2-150, 50, progress*3, 20);
+            ctx.font = "12px monospace";
+            ctx.fillText(`FIREWALLS DESTROIED: ${progress.toFixed(1)}%`, canvas.width/2-100, 45);
+            
+            if(progress >= 100) state = "OUTRO";
+        }
+        drawPlayer(player.x, player.y);
+    }
+
+    firewalls.forEach((f, i) => {
+        f.y += f.v;
+        
+        ctx.fillStyle = "#0078d7"; ctx.beginPath(); 
+        ctx.moveTo(f.x, f.y); ctx.lineTo(f.x+15, f.y+5); ctx.lineTo(f.x+15, f.y+20); ctx.lineTo(f.x, f.y+30); ctx.lineTo(f.x-15, f.y+20); ctx.lineTo(f.x-15, f.y+5); ctx.closePath();
+        ctx.fill(); ctx.strokeStyle = "#fff"; ctx.stroke();
+        
+        
+        if(Math.abs(f.x - player.x) < 40 && Math.abs(f.y - (player.y+40)) < 40) {
+            createExplosion(f.x, f.y);
+            progress = Math.max(0, progress - 10);
+            firewalls.splice(i, 1);
+        }
+        if(f.y > canvas.height) firewalls.splice(i, 1);
+    });
+
+    particles.forEach((p, i) => {
+        p.x += p.vx; p.y += p.vy; p.life -= 0.03;
+        ctx.fillStyle = `#0078d7, ${p.life})`;
+        ctx.fillRect(p.x, p.y, 4, 4);
+        if(p.life <= 0) particles.splice(i, 1);
+    });
+
+    if(state === "OUTRO") {
+        ctx.fillStyle = "#050505"; ctx.fillRect(0,0,canvas.width,canvas.height);
+        // Desk
+        ctx.fillStyle = "#333"; ctx.fillRect(canvas.width/2-60, canvas.height/2, 120, 10);
+        ctx.fillStyle = "#0f0"; ctx.fillRect(canvas.width/2-25, canvas.height/2-45, 50, 35);
+        
+        let walkX = (frame*3) % (canvas.width+200);
+        drawPlayer(walkX - 100, canvas.height/2+20);
+        
+        ctx.fillStyle = "#fff"; ctx.textAlign = "center"; ctx.font = "20px Courier New";
+        const yPos = canvas.height - (frame % 1500);
+        ctx.fillText("SUCCESS", canvas.width/2, yPos);
+        ctx.fillText("DEVELOPER: Joudacasa", canvas.width/2, yPos + 60);
+        ctx.fillText("CHARACTER MADE: Gemini", canvas.width/2, yPos + 120);
+        ctx.fillText("SECRET GAME UNBLOCKED,GO TO MY PROFILE TO UNBLOCK (ITCH.IO)", canvas.width/2, yPos + 180);
+        ctx.fillText("1% THIS MESSAGE APPEARS", canvas.width/2, yPos + 240);
+        ctx.fillText("THANKS FOR WATCH!", canvas.width/2, yPos + 300);
+       }
+    requestAnimationFrame(loop);
+}
+startSequence(); loop();
+</script>
+</body>
+</html>
